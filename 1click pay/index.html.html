@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1CLICK PAY</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; width: 100%; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 209, 178, 0.3), 0 0 60px rgba(0, 209, 178, 0.1); }
+      50% { box-shadow: 0 0 30px rgba(0, 209, 178, 0.5), 0 0 80px rgba(0, 209, 178, 0.2); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
+    .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
+    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+    .stagger-2 { animation-delay: 0.3s; opacity: 0; }
+    .stagger-3 { animation-delay: 0.5s; opacity: 0; }
+    .stagger-4 { animation-delay: 0.7s; opacity: 0; }
+    .stagger-5 { animation-delay: 0.9s; opacity: 0; }
+
+    .download-btn {
+      background: linear-gradient(135deg, #00d1b2, #00b4d8);
+      background-size: 200% 200%;
+      transition: all 0.4s ease;
+    }
+    .download-btn:hover {
+      background-size: 300% 300%;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 15px 40px rgba(0, 209, 178, 0.4);
+    }
+    .download-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .feature-card {
+      backdrop-filter: blur(20px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .logo-container {
+      position: relative;
+    }
+    .logo-container::before {
+      content: '';
+      position: absolute;
+      top: -4px; left: -4px; right: -4px; bottom: -4px;
+      border-radius: 28px;
+      background: conic-gradient(from 0deg, #00d1b2, #00b4d8, #7c3aed, #00d1b2);
+      animation: rotateBorder 4s linear infinite;
+      z-index: -1;
+    }
+
+    .glass-card {
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .shimmer-text {
+      background: linear-gradient(90deg, #00d1b2, #00b4d8, #7c3aed, #00d1b2);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+
+    .grid-bg {
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 209, 178, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124, 58, 237, 0.08), transparent),
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+    }
+
+    .stat-num {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Particles */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full overflow-auto" style="font-family: 'Tajawal', sans-serif; background: #0a0e17;">
+  <div id="app-wrapper" class="w-full min-h-full grid-bg relative" style="background-color: #0a0e17;"><!-- Floating Particles -->
+   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="particles-container"></div><!-- Navigation -->
+   <nav class="animate-fade-in stagger-1 relative z-10 flex items-center justify-between px-6 py-5 md:px-12">
+    <div class="flex items-center gap-3">
+     <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #00d1b2, #00b4d8);"><i data-lucide="zap" style="width:20px;height:20px;color:#0a0e17;"></i>
+     </div><span id="nav-brand" class="text-lg font-bold" style="color: #e0e7ef;">1CLICK PAY</span>
+    </div>
+    <div class="flex items-center gap-4"><span class="hidden sm:inline text-sm" style="color: #6b7a8d;">Android App</span>
+     <div class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(0,209,178,0.15); color: #00d1b2;">
+      V1.0
+     </div>
+    </div>
+   </nav><!-- Hero Section -->
+   <section class="relative z-10 flex flex-col items-center text-center px-6 pt-10 pb-16 md:pt-16 md:pb-24"><!-- Logo -->
+    <div class="animate-slide-up stagger-2 animate-float mb-8">
+     <div class="logo-container w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden" style="background: #141b2d;"><img src="https://ibb.co/39XWPhgJ" alt="1CLICK PAY Logo" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00d1b2,#00b4d8);border-radius:24px;\'><span style=\'font-size:2.5rem;font-weight:900;color:#0a0e17;\'>1C</span></div>';">
+     </div>
+    </div><!-- App Name -->
+    <h1 id="hero-title" class="animate-slide-up stagger-3 text-4xl md:text-6xl lg:text-7xl font-black mb-4 shimmer-text">1CLICK PAY</h1><!-- Tagline -->
+    <p id="hero-tagline" class="animate-slide-up stagger-4 text-xl md:text-2xl font-light mb-4" style="color: #8b9ab5;">ادفع بنقرة واحدة — سريع، آمن، بسيط</p><!-- Description -->
+    <p id="hero-description" class="animate-slide-up stagger-5 max-w-xl text-base md:text-lg mb-10" style="color: #5a677a;">تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك.</p><!-- Download Button -->
+    <div class="animate-slide-up stagger-5"><a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn animate-pulse-glow inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-lg md:text-xl font-bold" style="color: #0a0e17;" id="download-btn"> <i data-lucide="download" style="width:24px;height:24px;"></i> <span id="download-btn-text">تحميل التطبيق مجاناً</span> </a>
+     <div class="mt-4 flex items-center justify-center gap-2 text-sm" style="color: #5a677a;"><i data-lucide="shield-check" style="width:16px;height:16px;color:#00d1b2;"></i> <span>آمن ومجاني بالكامل • APK مباشر</span>
+     </div>
+    </div>
+   </section><!-- Stats Section -->
+   <section class="relative z-10 px-6 md:px-12 pb-16">
+    <div class="max-w-4xl mx-auto grid grid-cols-3 gap-4 md:gap-8">
+     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
+      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1">
+       100%
+      </div>
+      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
+       مجاني
+      </div>
+     </div>
+     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
+      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1">
+       V1.0
+      </div>
+      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
+       أحدث إصدار
+      </div>
+     </div>
+     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
+      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1"><i data-lucide="smartphone" style="width:28px;height:28px;display:inline;color:#00d1b2;"></i>
+      </div>
+      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
+       أندرويد
+      </div>
+     </div>
+    </div>
+   </section><!-- Features Section -->
+   <section class="relative z-10 px-6 md:px-12 pb-20">
+    <div class="max-w-5xl mx-auto">
+     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">لماذا <span class="shimmer-text">1CLICK PAY</span> ؟</h2>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><!-- Feature 1 -->
+      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,209,178,0.12);"><i data-lucide="zap" style="width:28px;height:28px;color:#00d1b2;"></i>
+       </div>
+       <h3 id="feature-1-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">سرعة فائقة</h3>
+       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">أتمم معاملاتك في أقل من ثانية واحدة. تقنية متطورة تضمن لك أسرع تجربة دفع.</p>
+      </div><!-- Feature 2 -->
+      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(124,58,237,0.12);"><i data-lucide="shield" style="width:28px;height:28px;color:#7c3aed;"></i>
+       </div>
+       <h3 id="feature-2-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">أمان متقدم</h3>
+       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">تشفير من الطرف إلى الطرف يحمي بياناتك ومعاملاتك بأعلى معايير الأمان العالمية.</p>
+      </div><!-- Feature 3 -->
+      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,180,216,0.12);"><i data-lucide="sparkles" style="width:28px;height:28px;color:#00b4d8;"></i>
+       </div>
+       <h3 id="feature-3-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">سهولة الاستخدام</h3>
+       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">واجهة بسيطة وأنيقة مصممة للجميع. نقرة واحدة فقط لإتمام أي عملية دفع.</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- How to Install -->
+   <section class="relative z-10 px-6 md:px-12 pb-20">
+    <div class="max-w-3xl mx-auto">
+     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">طريقة التثبيت</h2>
+     <div class="flex flex-col gap-5">
+      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #00d1b2, #00b4d8); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
+        1
+       </div>
+       <div>
+        <div class="font-bold mb-1" style="color: #e0e7ef;">
+         حمّل ملف APK
+        </div>
+        <div class="text-sm" style="color: #6b7a8d;">
+         اضغط على زر التحميل أعلاه لتنزيل الملف مباشرة
+        </div>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #00b4d8, #7c3aed); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
+        2
+       </div>
+       <div>
+        <div class="font-bold mb-1" style="color: #e0e7ef;">
+         فعّل المصادر المجهولة
+        </div>
+        <div class="text-sm" style="color: #6b7a8d;">
+         الإعدادات ← الأمان ← السماح بالتثبيت من مصادر غير معروفة
+        </div>
+       </div>
+      </div>
+      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7c3aed, #00d1b2); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
+        3
+       </div>
+       <div>
+        <div class="font-bold mb-1" style="color: #e0e7ef;">
+         ثبّت واستمتع
+        </div>
+        <div class="text-sm" style="color: #6b7a8d;">
+         افتح الملف المحمّل وابدأ استخدام التطبيق فوراً
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Testimonials Section -->
+   <section class="relative z-10 px-6 md:px-12 pb-20">
+    <div class="max-w-5xl mx-auto">
+     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">ماذا يقول <span class="shimmer-text">المستخدمون</span> ؟</h2>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Testimonial 1 -->
+      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #00d1b2, #00b4d8);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
+        </div>
+        <div>
+         <div class="font-bold text-sm" style="color: #e0e7ef;">
+          أحمد علي
+         </div>
+         <div class="text-xs" style="color: #6b7a8d;">
+          مستخدم منذ 6 أشهر
+         </div>
+        </div>
+       </div>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
+       </div>
+       <p id="testimonial-1" class="text-sm leading-relaxed" style="color: #b1c0d6;">"تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!"</p>
+      </div><!-- Testimonial 2 -->
+      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #00b4d8, #7c3aed);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
+        </div>
+        <div>
+         <div class="font-bold text-sm" style="color: #e0e7ef;">
+          فاطمة محمد
+         </div>
+         <div class="text-xs" style="color: #6b7a8d;">
+          مستخدمة منذ 3 أشهر
+         </div>
+        </div>
+       </div>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
+       </div>
+       <p id="testimonial-2" class="text-sm leading-relaxed" style="color: #b1c0d6;">"أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. توصي به بقوة!"</p>
+      </div><!-- Testimonial 3 -->
+      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
+       <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed, #00d1b2);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
+        </div>
+        <div>
+         <div class="font-bold text-sm" style="color: #e0e7ef;">
+          محمود حسن
+         </div>
+         <div class="text-xs" style="color: #6b7a8d;">
+          مستخدم منذ شهر
+         </div>
+        </div>
+       </div>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
+       </div>
+       <p id="testimonial-3" class="text-sm leading-relaxed" style="color: #b1c0d6;">"آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع به!"</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- CTA -->
+   <section class="relative z-10 px-6 md:px-12 pb-16">
+    <div class="max-w-2xl mx-auto glass-card rounded-3xl p-10 md:p-14 text-center" style="background: rgba(0,209,178,0.05); border: 1px solid rgba(0,209,178,0.15);">
+     <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: #e0e7ef;">جاهز للبدء؟</h2>
+     <p class="mb-8" style="color: #6b7a8d;">حمّل التطبيق الآن وابدأ تجربة دفع لا مثيل لها</p><a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-bold" style="color: #0a0e17;"> <i data-lucide="download" style="width:22px;height:22px;"></i> <span>تحميل الآن</span> </a>
+    </div>
+   </section><!-- Footer -->
+   <footer class="relative z-10 px-6 md:px-12 py-8 text-center" style="border-top: 1px solid rgba(255,255,255,0.05);">
+    <p id="footer-text" class="text-sm" style="color: #3d4a5c;">© 2025 1CLICK PAY — جميع الحقوق محفوظة</p>
+   </footer>
+  </div>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Particles
+    (function() {
+      const container = document.getElementById('particles-container');
+      const colors = ['#00d1b2', '#00b4d8', '#7c3aed'];
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.background = colors[i % colors.length];
+        p.style.opacity = (Math.random() * 0.3 + 0.1).toString();
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.animation = `float ${3 + Math.random() * 4}s ease-in-out infinite`;
+        p.style.animationDelay = (Math.random() * 3) + 's';
+        container.appendChild(p);
+      }
+    })();
+
+    // Download button - Direct link to GitHub release
+    const downloadBtn = document.getElementById('download-btn');
+    downloadBtn.href = 'https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk';
+
+    // Element SDK
+    const defaultConfig = {
+      app_name: '1CLICK PAY',
+      app_tagline: 'ادفع بنقرة واحدة — سريع، آمن، بسيط',
+      app_description: 'تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك.',
+      download_button_text: 'تحميل التطبيق مجاناً',
+      feature_1: 'سرعة فائقة',
+      feature_2: 'أمان متقدم',
+      feature_3: 'سهولة الاستخدام',
+      testimonial_1: 'تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!',
+      testimonial_2: 'أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. توصي به بقوة!',
+      testimonial_3: 'آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع به!',
+      footer_text: '© 2025 1CLICK PAY — جميع الحقوق محفوظة',
+      background_color: '#0a0e17',
+      surface_color: '#141b2d',
+      text_color: '#e0e7ef',
+      primary_action_color: '#00d1b2',
+      secondary_action_color: '#7c3aed',
+      font_family: 'Tajawal',
+      font_size: 16
+    };
+
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+
+      // Text content
+      document.getElementById('nav-brand').textContent = c.app_name;
+      document.getElementById('hero-title').textContent = c.app_name;
+      document.getElementById('hero-tagline').textContent = c.app_tagline;
+      document.getElementById('hero-description').textContent = c.app_description;
+      document.getElementById('download-btn-text').textContent = c.download_button_text;
+      document.getElementById('feature-1-title').textContent = c.feature_1;
+      document.getElementById('feature-2-title').textContent = c.feature_2;
+      document.getElementById('feature-3-title').textContent = c.feature_3;
+      document.getElementById('testimonial-1').textContent = `"${c.testimonial_1}"`;
+      document.getElementById('testimonial-2').textContent = `"${c.testimonial_2}"`;
+      document.getElementById('testimonial-3').textContent = `"${c.testimonial_3}"`;
+      document.getElementById('footer-text').textContent = c.footer_text;
+
+      // Colors
+      const wrapper = document.getElementById('app-wrapper');
+      wrapper.style.backgroundColor = c.background_color;
+      document.body.style.backgroundColor = c.background_color;
+
+      // Text color
+      document.querySelectorAll('[style*="color: #e0e7ef"]').forEach(el => {
+        el.style.color = c.text_color;
+      });
+      document.getElementById('nav-brand').style.color = c.text_color;
+      document.getElementById('hero-title').style.color = c.text_color;
+      document.querySelectorAll('h2, h3').forEach(el => {
+        if (el.classList.contains('shimmer-text')) return;
+        el.style.color = c.text_color;
+      });
+
+      // Font
+      const fontStack = `${c.font_family}, Tajawal, sans-serif`;
+      document.body.style.fontFamily = fontStack;
+
+      // Font size scaling
+      const base = c.font_size;
+      document.getElementById('hero-title').style.fontSize = '';
+      document.getElementById('hero-tagline').style.fontSize = `${base * 1.4}px`;
+      document.getElementById('hero-description').style.fontSize = `${base}px`;
+      document.getElementById('footer-text').style.fontSize = `${base * 0.85}px`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          applyConfig(config);
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['app_name', config.app_name || defaultConfig.app_name],
+          ['app_tagline', config.app_tagline || defaultConfig.app_tagline],
+          ['app_description', config.app_description || defaultConfig.app_description],
+          ['download_button_text', config.download_button_text || defaultConfig.download_button_text],
+          ['feature_1', config.feature_1 || defaultConfig.feature_1],
+          ['feature_2', config.feature_2 || defaultConfig.feature_2],
+          ['feature_3', config.feature_3 || defaultConfig.feature_3],
+          ['testimonial_1', config.testimonial_1 || defaultConfig.testimonial_1],
+          ['testimonial_2', config.testimonial_2 || defaultConfig.testimonial_2],
+          ['testimonial_3', config.testimonial_3 || defaultConfig.testimonial_3],
+          ['footer_text', config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dfbfcc9d363a62e',t:'MTc3NDA4NTk0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
