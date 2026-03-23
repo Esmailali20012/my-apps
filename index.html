@@ -77,16 +77,6 @@
     .logo-container {
       position: relative;
     }
-    .logo-container::before {
-      content: '';
-      position: absolute;
-      top: -6px; left: -6px; right: -6px; bottom: -6px;
-      border-radius: 32px;
-      background: conic-gradient(from 0deg, #FF6B1D, #0066FF, #FF6B1D);
-      animation: rotateBorder 5s linear infinite;
-      z-index: -1;
-      filter: blur(1px);
-    }
 
     .glass-card {
       backdrop-filter: blur(20px);
@@ -128,35 +118,28 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full w-full overflow-auto" style="font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, #0a1428 0%, #0f1f35 50%, #1a1f2e 100%);">
-  <div id="app-wrapper" class="w-full min-h-full grid-bg relative" style="background: linear-gradient(135deg, #0a1428 0%, #0f1f35 50%, #1a1f2e 100%);">
-   <!-- Floating Particles -->
+  <div id="app-wrapper" class="w-full min-h-full grid-bg relative" style="background: linear-gradient(135deg, #0a1428 0%, #0f1f35 50%, #1a1f2e 100%);"><!-- Floating Particles -->
    <div class="absolute inset-0 overflow-hidden pointer-events-none" id="particles-container"></div><!-- Navigation -->
    <nav class="animate-fade-in stagger-1 relative z-10 flex items-center justify-between px-6 py-5 md:px-12">
     <div class="flex items-center gap-3">
-     <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #FF8C42);">
-      <span style="font-weight:900;font-size:0.65rem;color:#fff;">1C</span>
+     <div class="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center"><img src="https://i.ibb.co/39XWPhgJ/1c-logo.png" alt="1CLICK PAY" loading="lazy" style="width:100%;height:100%;object-fit:contain;" onerror="console.error('Logo failed to load:', this.src); this.style.background='#FF6B1D';">
      </div><span id="nav-brand" class="text-lg font-bold" style="color: #ffffff;">ون كليك باي</span>
     </div>
-    <div class="flex items-center gap-4">
-     <span class="hidden sm:inline text-sm" style="color: #8b9aad;">Android App</span>
+    <div class="flex items-center gap-4"><span class="hidden sm:inline text-sm" style="color: #8b9aad;">Android App</span>
      <div class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(255,107,29,0.2); color: #FF8C42;">
       V1.0
      </div>
     </div>
    </nav><!-- Hero Section -->
-   <section class="relative z-10 flex flex-col items-center text-center px-6 pt-10 pb-16 md:pt-16 md:pb-24">
-    <!-- Logo -->
+   <section class="relative z-10 flex flex-col items-center text-center px-6 pt-10 pb-16 md:pt-16 md:pb-24"><!-- Logo -->
     <div class="animate-slide-up stagger-2 animate-float mb-8">
-     <div class="logo-container w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #FF8C42);">
-      <span style="font-size:2.8rem;font-weight:900;color:#fff;">1C</span>
+     <div class="logo-container w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden flex items-center justify-center" style="background: transparent;"><img src="https://i.ibb.co/39XWPhgJ/1c-logo.png" alt="1CLICK PAY Logo" loading="lazy" style="width:100%;height:100%;object-fit:contain;" onerror="console.error('Logo failed to load:', this.src); this.style.display='none'; document.querySelector('.logo-container span').style.display='block';">
      </div>
     </div><!-- App Name -->
     <h1 id="hero-title" class="animate-slide-up stagger-3 text-4xl md:text-6xl lg:text-7xl font-black mb-8" style="background: linear-gradient(135deg, #FF6B1D, #FF8C42); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">ون كليك باي</h1><!-- Download Section -->
-    <div class="animate-slide-up stagger-5 flex flex-col items-center gap-6 mt-8">
-     <a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn animate-pulse-glow inline-flex items-center gap-3 px-12 py-6 rounded-2xl text-lg md:text-xl font-bold" style="color: #0a0e17;" id="download-btn"> <i data-lucide="download" style="width:26px;height:26px;"></i> <span id="download-btn-text">انقر هنا لتحميل التطبيق</span> </a>
+    <div class="animate-slide-up stagger-5 flex flex-col items-center gap-6 mt-8"><a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn animate-pulse-glow inline-flex items-center gap-3 px-12 py-6 rounded-2xl text-lg md:text-xl font-bold" style="color: #0a0e17;" id="download-btn"> <i data-lucide="download" style="width:26px;height:26px;"></i> <span id="download-btn-text">انقر هنا لتحميل التطبيق</span> </a>
      <p id="hero-description" class="max-w-xl text-sm md:text-base leading-relaxed text-center mx-auto" style="color: #8b9ab5;">تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك.</p>
-     <div class="flex items-center justify-center gap-2 text-sm" style="color: #5a677a;">
-      <i data-lucide="shield-check" style="width:16px;height:16px;color:#00d1b2;"></i> <span>آمن ومجاني بالكامل • APK مباشر</span>
+     <div class="flex items-center justify-center gap-2 text-sm" style="color: #5a677a;"><i data-lucide="shield-check" style="width:16px;height:16px;color:#00d1b2;"></i> <span>آمن ومجاني بالكامل • APK مباشر</span>
      </div>
     </div>
    </section><!-- Stats Section -->
@@ -179,8 +162,7 @@
       </div>
      </div>
      <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
-      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1">
-       <i data-lucide="smartphone" style="width:28px;height:28px;display:inline;color:#00d1b2;"></i>
+      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1"><i data-lucide="smartphone" style="width:28px;height:28px;display:inline;color:#00d1b2;"></i>
       </div>
       <div class="text-xs md:text-sm" style="color: #6b8a9d;">
        أندرويد
@@ -191,25 +173,21 @@
    <section class="relative z-10 px-6 md:px-12 pb-20">
     <div class="max-w-5xl mx-auto">
      <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">تعرف عن <span class="shimmer-text">ون كليك باي</span></h2>
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Feature 1 -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><!-- Feature 1 -->
       <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,107,29,0.15);">
-        <i data-lucide="zap" style="width:28px;height:28px;color:#FF6B1D;"></i>
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,107,29,0.15);"><i data-lucide="zap" style="width:28px;height:28px;color:#FF6B1D;"></i>
        </div>
        <h3 id="feature-1-title" class="text-xl font-bold mb-3" style="color: #ffffff;">سرعة فائقة</h3>
        <p class="text-sm leading-relaxed" style="color: #6b8a9d;">أتمم معاملاتك في أقل من ثانية واحدة. تقنية متطورة تضمن لك أسرع تجربة دفع.</p>
       </div><!-- Feature 2 -->
       <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,102,255,0.15);">
-        <i data-lucide="shield" style="width:28px;height:28px;color:#0066FF;"></i>
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,102,255,0.15);"><i data-lucide="shield" style="width:28px;height:28px;color:#0066FF;"></i>
        </div>
        <h3 id="feature-2-title" class="text-xl font-bold mb-3" style="color: #ffffff;">أمان متقدم</h3>
        <p class="text-sm leading-relaxed" style="color: #6b8a9d;">تشفير من الطرف إلى الطرف يحمي بياناتك ومعاملاتك بأعلى معايير الأمان العالمية.</p>
       </div><!-- Feature 3 -->
       <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,107,29,0.15);">
-        <i data-lucide="sparkles" style="width:28px;height:28px;color:#FF8C42;"></i>
+       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(255,107,29,0.15);"><i data-lucide="sparkles" style="width:28px;height:28px;color:#FF8C42;"></i>
        </div>
        <h3 id="feature-3-title" class="text-xl font-bold mb-3" style="color: #ffffff;">سهولة الاستخدام</h3>
        <p class="text-sm leading-relaxed" style="color: #6b8a9d;">واجهة بسيطة وأنيقة مصممة للجميع. نقرة واحدة فقط لإتمام أي عملية دفع.</p>
@@ -266,10 +244,12 @@
    <section class="relative z-10 px-6 md:px-12 pb-20">
     <div class="max-w-5xl mx-auto">
      <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #ffffff;">ماذا يقول <span class="shimmer-text">المستخدمون</span> ؟</h2>
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><!-- Testimonial 1 -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Testimonial 1 -->
       <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
        <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #FF8C42);"><i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #FF8C42);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
         </div>
         <div>
          <div class="font-bold text-sm" style="color: #ffffff;">
@@ -280,13 +260,15 @@
          </div>
         </div>
        </div>
-       <div class="flex gap-1 mb-4"><i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i>
        </div>
        <p id="testimonial-1" class="text-sm leading-relaxed" style="color: #b1c0d6;">"تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!"</p>
       </div><!-- Testimonial 2 -->
       <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
        <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #0066FF, #00a8ff);"><i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #0066FF, #00a8ff);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
         </div>
         <div>
          <div class="font-bold text-sm" style="color: #ffffff;">
@@ -297,13 +279,15 @@
          </div>
         </div>
        </div>
-       <div class="flex gap-1 mb-4"><i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#0066FF;color:#0066FF;"></i>
        </div>
        <p id="testimonial-2" class="text-sm leading-relaxed" style="color: #b1c0d6;">"أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. توصي به بقوة!"</p>
       </div><!-- Testimonial 3 -->
       <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
        <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #0066FF);"><i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
+        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #FF6B1D, #0066FF);">
+         <i data-lucide="user" style="width:24px;height:24px;color:#fff;"></i>
         </div>
         <div>
          <div class="font-bold text-sm" style="color: #ffffff;">
@@ -314,7 +298,8 @@
          </div>
         </div>
        </div>
-       <div class="flex gap-1 mb-4"><i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i>
+       <div class="flex gap-1 mb-4">
+        <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#FF6B1D;color:#FF6B1D;"></i>
        </div>
        <p id="testimonial-3" class="text-sm leading-relaxed" style="color: #b1c0d6;">"آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع به!"</p>
       </div>
@@ -478,5 +463,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e050b8ae3bea62e',t:'MTc3NDE4MDkyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e0c741fa068e1d1',t:'MTc3NDI1ODYwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
