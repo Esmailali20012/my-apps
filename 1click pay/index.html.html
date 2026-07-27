@@ -1,471 +1,769 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>1CLICK PAY</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&amp;display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; width: 100%; }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ون كليك باي | One Click Pay</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --blue: #1e4d8c;
+    --orange: #f26522;
+    --dark: #050810;
+    --card: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.06);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Cairo',sans-serif;
+    background:var(--dark);
+    color:#fff;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 20px rgba(0, 209, 178, 0.3), 0 0 60px rgba(0, 209, 178, 0.1); }
-      50% { box-shadow: 0 0 30px rgba(0, 209, 178, 0.5), 0 0 80px rgba(0, 209, 178, 0.2); }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(40px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes shimmer {
-      0% { background-position: -200% center; }
-      100% { background-position: 200% center; }
-    }
-    @keyframes rotateBorder {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .animate-float { animation: float 4s ease-in-out infinite; }
-    .animate-pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
-    .animate-slide-up { animation: slideUp 0.8s ease-out forwards; }
-    .animate-fade-in { animation: fadeIn 1s ease-out forwards; }
-    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
-    .stagger-2 { animation-delay: 0.3s; opacity: 0; }
-    .stagger-3 { animation-delay: 0.5s; opacity: 0; }
-    .stagger-4 { animation-delay: 0.7s; opacity: 0; }
-    .stagger-5 { animation-delay: 0.9s; opacity: 0; }
+  /* ===== CANVAS BG ===== */
+  #bgCanvas {
+    position:fixed; inset:0; z-index:0;
+    pointer-events:none;
+  }
 
-    .download-btn {
-      background: linear-gradient(135deg, #00d1b2, #00b4d8);
-      background-size: 200% 200%;
-      transition: all 0.4s ease;
-    }
-    .download-btn:hover {
-      background-size: 300% 300%;
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 15px 40px rgba(0, 209, 178, 0.4);
-    }
-    .download-btn:active {
-      transform: translateY(0) scale(0.98);
-    }
+  /* ===== NAV ===== */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding:16px 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    background:linear-gradient(180deg, rgba(5,8,16,0.9), transparent);
+    backdrop-filter:blur(12px);
+  }
+  .nav-logo {
+    display:flex; align-items:center; gap:10px;
+  }
+  .nav-logo img {
+    width:36px; height:36px; border-radius:10px;
+    object-fit:contain;
+    filter:drop-shadow(0 0 10px rgba(242,101,34,0.4));
+  }
+  .nav-logo span {
+    font-weight:800; font-size:1.1rem; letter-spacing:0.5px;
+  }
+  .nav-badge {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:99px;
+    background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2);
+    font-size:0.75rem; color:#4ade80;
+  }
+  .nav-badge .dot {
+    width:6px; height:6px; border-radius:50%; background:#4ade80;
+    box-shadow:0 0 8px #4ade80;
+    animation:blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-    .feature-card {
-      backdrop-filter: blur(20px);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .feature-card:hover {
-      transform: translateY(-8px);
-    }
+  /* ===== HERO ===== */
+  .hero {
+    position:relative; z-index:2;
+    min-height:100vh;
+    display:flex; align-items:center;
+    padding:120px 32px 80px;
+  }
+  .hero-inner {
+    max-width:1200px; margin:0 auto;
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  }
+  @media(max-width:900px){ .hero-inner{grid-template-columns:1fr; text-align:center;} }
 
-    .logo-container {
-      position: relative;
-    }
-    .logo-container::before {
-      content: '';
-      position: absolute;
-      top: -4px; left: -4px; right: -4px; bottom: -4px;
-      border-radius: 28px;
-      background: conic-gradient(from 0deg, #00d1b2, #00b4d8, #7c3aed, #00d1b2);
-      animation: rotateBorder 4s linear infinite;
-      z-index: -1;
-    }
+  /* Text side */
+  .hero-tag {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 18px; border-radius:99px;
+    background:linear-gradient(135deg, rgba(242,101,34,0.15), rgba(30,77,140,0.15));
+    border:1px solid rgba(242,101,34,0.2);
+    font-size:0.8rem; color:#fb923c; margin-bottom:24px;
+    opacity:0; transform:translateY(20px);
+    animation:fadeUp 0.8s 0.2s forwards;
+  }
+  .hero h1 {
+    font-size:clamp(2.8rem,5vw,4.5rem);
+    font-weight:900; line-height:1.1; margin-bottom:20px;
+    opacity:0; transform:translateY(30px);
+    animation:fadeUp 0.8s 0.4s forwards;
+  }
+  .hero h1 .grad {
+    background:linear-gradient(135deg, var(--orange), #ff8a4c, var(--blue), var(--orange));
+    background-size:300% 300%;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation:gradMove 5s ease infinite;
+  }
+  @keyframes gradMove { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  .hero p.lead {
+    font-size:1.25rem; color:#94a3b8; font-weight:300; margin-bottom:12px;
+    opacity:0; transform:translateY(20px);
+    animation:fadeUp 0.8s 0.55s forwards;
+  }
+  .hero p.sub {
+    font-size:0.95rem; color:#64748b; line-height:1.8; max-width:480px; margin-bottom:36px;
+    opacity:0; transform:translateY(20px);
+    animation:fadeUp 0.8s 0.7s forwards;
+  }
+  @media(max-width:900px){ .hero p.sub{max-width:100%;} }
 
-    .glass-card {
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+  @keyframes fadeUp { to{opacity:1; transform:translateY(0)} }
 
-    .shimmer-text {
-      background: linear-gradient(90deg, #00d1b2, #00b4d8, #7c3aed, #00d1b2);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: shimmer 3s linear infinite;
-    }
+  /* Download button */
+  .btn-main {
+    position:relative; display:inline-flex; align-items:center; gap:12px;
+    padding:18px 40px; border-radius:16px;
+    font-size:1.1rem; font-weight:700; color:#fff;
+    background:linear-gradient(135deg, var(--orange), #e04e0f);
+    border:none; cursor:pointer; overflow:hidden;
+    box-shadow:0 10px 40px rgba(242,101,34,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    opacity:0; transform:translateY(20px);
+    animation:fadeUp 0.8s 0.85s forwards;
+    text-decoration:none;
+  }
+  .btn-main::before {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    transform:translateX(-100%);
+    transition:transform 0.6s;
+  }
+  .btn-main:hover::before { transform:translateX(100%); }
+  .btn-main:hover {
+    transform:translateY(-4px) scale(1.03);
+    box-shadow:0 20px 60px rgba(242,101,34,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .btn-main:active { transform:translateY(0) scale(0.97); }
 
-    .grid-bg {
-      background-image:
-        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 209, 178, 0.12), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124, 58, 237, 0.08), transparent),
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
-    }
+  .hero-trust {
+    display:flex; gap:24px; margin-top:28px; font-size:0.8rem; color:#475569;
+    opacity:0; transform:translateY(20px);
+    animation:fadeUp 0.8s 1s forwards;
+  }
+  @media(max-width:900px){ .hero-trust{justify-content:center;} }
+  .hero-trust span { display:flex; align-items:center; gap:6px; }
+  .hero-trust i { color:var(--orange); }
 
-    .stat-num {
-      font-variant-numeric: tabular-nums;
-    }
+  /* Visual side */
+  .hero-visual {
+    position:relative; display:flex; justify-content:center; align-items:center;
+    min-height:400px;
+  }
+  .orbit-container {
+    position:relative; width:380px; height:380px;
+  }
+  @media(max-width:500px){ .orbit-container{width:280px;height:280px;} }
 
-    /* Particles */
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      pointer-events: none;
-    }
-  </style>
-  <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full w-full overflow-auto" style="font-family: 'Tajawal', sans-serif; background: #0a0e17;">
-  <div id="app-wrapper" class="w-full min-h-full grid-bg relative" style="background-color: #0a0e17;"><!-- Floating Particles -->
-   <div class="absolute inset-0 overflow-hidden pointer-events-none" id="particles-container"></div><!-- Navigation -->
-   <nav class="animate-fade-in stagger-1 relative z-10 flex items-center justify-between px-6 py-5 md:px-12">
-    <div class="flex items-center gap-3">
-     <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #00d1b2, #00b4d8);"><i data-lucide="zap" style="width:20px;height:20px;color:#0a0e17;"></i>
-     </div><span id="nav-brand" class="text-lg font-bold" style="color: #e0e7ef;">1CLICK PAY</span>
-    </div>
-    <div class="flex items-center gap-4"><span class="hidden sm:inline text-sm" style="color: #6b7a8d;">Android App</span>
-     <div class="px-3 py-1 rounded-full text-xs font-bold" style="background: rgba(0,209,178,0.15); color: #00d1b2;">
-      V1.0
-     </div>
-    </div>
-   </nav><!-- Hero Section -->
-   <section class="relative z-10 flex flex-col items-center text-center px-6 pt-10 pb-16 md:pt-16 md:pb-24"><!-- Logo -->
-    <div class="animate-slide-up stagger-2 animate-float mb-8">
-     <div class="logo-container w-28 h-28 md:w-32 md:h-32 rounded-3xl overflow-hidden" style="background: #141b2d;"><img src="https://ibb.co/39XWPhgJ" alt="1CLICK PAY Logo" class="w-full h-full object-cover" loading="lazy" onerror="console.error('Image failed to load:', this.src); this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00d1b2,#00b4d8);border-radius:24px;\'><span style=\'font-size:2.5rem;font-weight:900;color:#0a0e17;\'>1C</span></div>';">
-     </div>
-    </div><!-- App Name -->
-    <h1 id="hero-title" class="animate-slide-up stagger-3 text-4xl md:text-6xl lg:text-7xl font-black mb-4 shimmer-text">1CLICK PAY</h1><!-- Tagline -->
-    <p id="hero-tagline" class="animate-slide-up stagger-4 text-xl md:text-2xl font-light mb-4" style="color: #8b9ab5;">ادفع بنقرة واحدة — سريع، آمن، بسيط</p><!-- Description -->
-    <p id="hero-description" class="animate-slide-up stagger-5 max-w-xl text-base md:text-lg mb-10" style="color: #5a677a;">تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك.</p><!-- Download Button -->
-    <div class="animate-slide-up stagger-5"><a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn animate-pulse-glow inline-flex items-center gap-3 px-10 py-5 rounded-2xl text-lg md:text-xl font-bold" style="color: #0a0e17;" id="download-btn"> <i data-lucide="download" style="width:24px;height:24px;"></i> <span id="download-btn-text">تحميل التطبيق مجاناً</span> </a>
-     <div class="mt-4 flex items-center justify-center gap-2 text-sm" style="color: #5a677a;"><i data-lucide="shield-check" style="width:16px;height:16px;color:#00d1b2;"></i> <span>آمن ومجاني بالكامل • APK مباشر</span>
-     </div>
-    </div>
-   </section><!-- Stats Section -->
-   <section class="relative z-10 px-6 md:px-12 pb-16">
-    <div class="max-w-4xl mx-auto grid grid-cols-3 gap-4 md:gap-8">
-     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
-      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1">
-       100%
-      </div>
-      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
-       مجاني
-      </div>
-     </div>
-     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
-      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1">
-       V1.0
-      </div>
-      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
-       أحدث إصدار
-      </div>
-     </div>
-     <div class="glass-card rounded-2xl p-5 md:p-6 text-center" style="background: rgba(20, 27, 45, 0.8);">
-      <div class="stat-num text-2xl md:text-4xl font-black shimmer-text mb-1"><i data-lucide="smartphone" style="width:28px;height:28px;display:inline;color:#00d1b2;"></i>
-      </div>
-      <div class="text-xs md:text-sm" style="color: #6b7a8d;">
-       أندرويد
-      </div>
-     </div>
-    </div>
-   </section><!-- Features Section -->
-   <section class="relative z-10 px-6 md:px-12 pb-20">
-    <div class="max-w-5xl mx-auto">
-     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">لماذا <span class="shimmer-text">1CLICK PAY</span> ؟</h2>
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><!-- Feature 1 -->
-      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,209,178,0.12);"><i data-lucide="zap" style="width:28px;height:28px;color:#00d1b2;"></i>
-       </div>
-       <h3 id="feature-1-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">سرعة فائقة</h3>
-       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">أتمم معاملاتك في أقل من ثانية واحدة. تقنية متطورة تضمن لك أسرع تجربة دفع.</p>
-      </div><!-- Feature 2 -->
-      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(124,58,237,0.12);"><i data-lucide="shield" style="width:28px;height:28px;color:#7c3aed;"></i>
-       </div>
-       <h3 id="feature-2-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">أمان متقدم</h3>
-       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">تشفير من الطرف إلى الطرف يحمي بياناتك ومعاملاتك بأعلى معايير الأمان العالمية.</p>
-      </div><!-- Feature 3 -->
-      <div class="feature-card glass-card rounded-2xl p-7 md:p-8" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-14 h-14 rounded-xl flex items-center justify-center mb-5" style="background: rgba(0,180,216,0.12);"><i data-lucide="sparkles" style="width:28px;height:28px;color:#00b4d8;"></i>
-       </div>
-       <h3 id="feature-3-title" class="text-xl font-bold mb-3" style="color: #e0e7ef;">سهولة الاستخدام</h3>
-       <p class="text-sm leading-relaxed" style="color: #6b7a8d;">واجهة بسيطة وأنيقة مصممة للجميع. نقرة واحدة فقط لإتمام أي عملية دفع.</p>
-      </div>
-     </div>
-    </div>
-   </section><!-- How to Install -->
-   <section class="relative z-10 px-6 md:px-12 pb-20">
-    <div class="max-w-3xl mx-auto">
-     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">طريقة التثبيت</h2>
-     <div class="flex flex-col gap-5">
-      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #00d1b2, #00b4d8); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
-        1
-       </div>
-       <div>
-        <div class="font-bold mb-1" style="color: #e0e7ef;">
-         حمّل ملف APK
-        </div>
-        <div class="text-sm" style="color: #6b7a8d;">
-         اضغط على زر التحميل أعلاه لتنزيل الملف مباشرة
-        </div>
-       </div>
-      </div>
-      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #00b4d8, #7c3aed); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
-        2
-       </div>
-       <div>
-        <div class="font-bold mb-1" style="color: #e0e7ef;">
-         فعّل المصادر المجهولة
-        </div>
-        <div class="text-sm" style="color: #6b7a8d;">
-         الإعدادات ← الأمان ← السماح بالتثبيت من مصادر غير معروفة
-        </div>
-       </div>
-      </div>
-      <div class="glass-card rounded-xl p-5 flex items-center gap-5" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #7c3aed, #00d1b2); color: #0a0e17; font-weight: 900; font-size: 1.2rem;">
-        3
-       </div>
-       <div>
-        <div class="font-bold mb-1" style="color: #e0e7ef;">
-         ثبّت واستمتع
-        </div>
-        <div class="text-sm" style="color: #6b7a8d;">
-         افتح الملف المحمّل وابدأ استخدام التطبيق فوراً
-        </div>
-       </div>
-      </div>
-     </div>
-    </div>
-   </section><!-- Testimonials Section -->
-   <section class="relative z-10 px-6 md:px-12 pb-20">
-    <div class="max-w-5xl mx-auto">
-     <h2 class="text-2xl md:text-3xl font-bold text-center mb-12" style="color: #e0e7ef;">ماذا يقول <span class="shimmer-text">المستخدمون</span> ؟</h2>
-     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Testimonial 1 -->
-      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #00d1b2, #00b4d8);">
-         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
-        </div>
-        <div>
-         <div class="font-bold text-sm" style="color: #e0e7ef;">
-          أحمد علي
-         </div>
-         <div class="text-xs" style="color: #6b7a8d;">
-          مستخدم منذ 6 أشهر
-         </div>
-        </div>
-       </div>
-       <div class="flex gap-1 mb-4">
-        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
-       </div>
-       <p id="testimonial-1" class="text-sm leading-relaxed" style="color: #b1c0d6;">"تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!"</p>
-      </div><!-- Testimonial 2 -->
-      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #00b4d8, #7c3aed);">
-         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
-        </div>
-        <div>
-         <div class="font-bold text-sm" style="color: #e0e7ef;">
-          فاطمة محمد
-         </div>
-         <div class="text-xs" style="color: #6b7a8d;">
-          مستخدمة منذ 3 أشهر
-         </div>
-        </div>
-       </div>
-       <div class="flex gap-1 mb-4">
-        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
-       </div>
-       <p id="testimonial-2" class="text-sm leading-relaxed" style="color: #b1c0d6;">"أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. توصي به بقوة!"</p>
-      </div><!-- Testimonial 3 -->
-      <div class="glass-card rounded-2xl p-7 md:p-8 relative" style="background: rgba(20, 27, 45, 0.6);">
-       <div class="flex items-center gap-3 mb-4">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed, #00d1b2);">
-         <i data-lucide="user" style="width:24px;height:24px;color:#0a0e17;"></i>
-        </div>
-        <div>
-         <div class="font-bold text-sm" style="color: #e0e7ef;">
-          محمود حسن
-         </div>
-         <div class="text-xs" style="color: #6b7a8d;">
-          مستخدم منذ شهر
-         </div>
-        </div>
-       </div>
-       <div class="flex gap-1 mb-4">
-        <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i> <i data-lucide="star" style="width:16px;height:16px;fill:#fbbf24;color:#fbbf24;"></i>
-       </div>
-       <p id="testimonial-3" class="text-sm leading-relaxed" style="color: #b1c0d6;">"آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع به!"</p>
-      </div>
-     </div>
-    </div>
-   </section><!-- CTA -->
-   <section class="relative z-10 px-6 md:px-12 pb-16">
-    <div class="max-w-2xl mx-auto glass-card rounded-3xl p-10 md:p-14 text-center" style="background: rgba(0,209,178,0.05); border: 1px solid rgba(0,209,178,0.15);">
-     <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: #e0e7ef;">جاهز للبدء؟</h2>
-     <p class="mb-8" style="color: #6b7a8d;">حمّل التطبيق الآن وابدأ تجربة دفع لا مثيل لها</p><a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk" target="_blank" rel="noopener noreferrer" class="download-btn inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-bold" style="color: #0a0e17;"> <i data-lucide="download" style="width:22px;height:22px;"></i> <span>تحميل الآن</span> </a>
-    </div>
-   </section><!-- Footer -->
-   <footer class="relative z-10 px-6 md:px-12 py-8 text-center" style="border-top: 1px solid rgba(255,255,255,0.05);">
-    <p id="footer-text" class="text-sm" style="color: #3d4a5c;">© 2025 1CLICK PAY — جميع الحقوق محفوظة</p>
-   </footer>
+  /* Rotating rings */
+  .ring {
+    position:absolute; inset:0; border-radius:50%;
+    border:1px solid rgba(242,101,34,0.08);
+  }
+  .ring.r1 { animation:spin 20s linear infinite; }
+  .ring.r2 { inset:30px; animation:spin 25s linear infinite reverse; border-color:rgba(30,77,140,0.1); }
+  .ring.r3 { inset:60px; animation:spin 15s linear infinite; border-color:rgba(242,101,34,0.06); }
+  .ring.r4 { inset:90px; animation:spin 30s linear infinite reverse; border-color:rgba(30,77,140,0.08); }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* Orbiting dots */
+  .orbit-dot {
+    position:absolute; width:8px; height:8px; border-radius:50%;
+    background:var(--orange);
+    box-shadow:0 0 12px var(--orange);
+  }
+  .od1 { top:0; left:50%; transform:translate(-50%,-50%); animation:orbit1 8s linear infinite; }
+  .od2 { top:50%; right:0; transform:translate(50%,-50%); background:var(--blue); box-shadow:0 0 12px var(--blue); animation:orbit2 10s linear infinite; }
+  .od3 { bottom:0; left:50%; transform:translate(-50%,50%); background:#a855f7; box-shadow:0 0 12px #a855f7; animation:orbit3 12s linear infinite; }
+
+  @keyframes orbit1 { 0%{top:0;left:50%} 25%{top:50%;left:100%} 50%{top:100%;left:50%} 75%{top:50%;left:0} 100%{top:0;left:50%} }
+  @keyframes orbit2 { 0%{top:50%;right:0} 25%{top:100%;right:50%} 50%{top:50%;right:100%} 75%{top:0;right:50%} 100%{top:50%;right:0} }
+  @keyframes orbit3 { 0%{bottom:0;left:50%} 25%{bottom:50%;left:0} 50%{bottom:100%;left:50%} 75%{bottom:50%;left:100%} 100%{bottom:0;left:50%} }
+
+  /* Logo card */
+  .logo-card {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:220px; height:220px; border-radius:32px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.08);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    animation:floatCard 6s ease-in-out infinite;
+    z-index:5;
+  }
+  @media(max-width:500px){ .logo-card{width:160px;height:160px;border-radius:24px;} }
+  .logo-card img {
+    width:70%; height:70%; object-fit:contain;
+    filter:drop-shadow(0 10px 30px rgba(242,101,34,0.3));
+    animation:logoPulse 4s ease-in-out infinite;
+  }
+  @keyframes floatCard { 0%,100%{transform:translate(-50%,-50%) translateY(0)} 50%{transform:translate(-50%,-50%) translateY(-15px)} }
+  @keyframes logoPulse { 0%,100%{filter:drop-shadow(0 10px 30px rgba(242,101,34,0.3))} 50%{filter:drop-shadow(0 15px 40px rgba(242,101,34,0.5))} }
+
+  /* Glow behind logo */
+  .logo-glow {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle, rgba(242,101,34,0.12), transparent 70%);
+    animation:glowPulse 4s ease-in-out infinite;
+    z-index:1;
+  }
+  @keyframes glowPulse { 0%,100%{opacity:0.6; transform:translate(-50%,-50%) scale(1)} 50%{opacity:1; transform:translate(-50%,-50%) scale(1.15)} }
+
+  /* Floating badges */
+  .float-badge {
+    position:absolute; padding:10px 16px; border-radius:12px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+    backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.06);
+    font-size:0.75rem; font-weight:700;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    z-index:10;
+  }
+  .fb1 { top:10%; right:5%; animation:fbFloat 5s ease-in-out infinite; }
+  .fb2 { bottom:15%; left:0; animation:fbFloat 6s ease-in-out infinite 1s; }
+  .fb3 { top:60%; right:-5%; animation:fbFloat 7s ease-in-out infinite 2s; }
+  @keyframes fbFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+  /* ===== SECTIONS COMMON ===== */
+  section { position:relative; z-index:2; padding:100px 32px; }
+  .section-title {
+    text-align:center; margin-bottom:60px;
+    opacity:0; transform:translateY(30px);
+    transition:all 0.8s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .section-title.visible { opacity:1; transform:translateY(0); }
+  .section-title .label {
+    display:inline-block; padding:6px 16px; border-radius:99px;
+    background:linear-gradient(135deg, rgba(242,101,34,0.12), rgba(30,77,140,0.12));
+    border:1px solid rgba(242,101,34,0.15);
+    font-size:0.75rem; font-weight:700; color:var(--orange); margin-bottom:16px;
+  }
+  .section-title h2 {
+    font-size:clamp(1.8rem,4vw,3rem); font-weight:900; margin-bottom:12px;
+  }
+  .section-title h2 .grad {
+    background:linear-gradient(135deg, var(--orange), #ff8a4c, var(--blue));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .section-title p { color:#64748b; font-size:1rem; max-width:500px; margin:0 auto; }
+
+  /* ===== STATS ===== */
+  .stats-grid {
+    max-width:900px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+  }
+  @media(max-width:700px){ .stats-grid{grid-template-columns:repeat(2,1fr);} }
+  .stat-item {
+    padding:28px 16px; border-radius:20px; text-align:center;
+    background:linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    backdrop-filter:blur(10px);
+    transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    opacity:0; transform:translateY(30px) scale(0.95);
+  }
+  .stat-item.visible { opacity:1; transform:translateY(0) scale(1); }
+  .stat-item:hover {
+    transform:translateY(-6px) scale(1.03);
+    border-color:rgba(242,101,34,0.2);
+    box-shadow:0 20px 40px rgba(0,0,0,0.3);
+  }
+  .stat-item .num {
+    font-size:2rem; font-weight:900; margin-bottom:6px;
+    background:linear-gradient(135deg, var(--orange), #ff8a4c);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  .stat-item .lbl { font-size:0.8rem; color:#475569; }
+
+  /* ===== FEATURES ===== */
+  .features-grid {
+    max-width:1100px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+  }
+  @media(max-width:900px){ .features-grid{grid-template-columns:1fr;} }
+  .feat-card {
+    padding:36px 28px; border-radius:24px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    backdrop-filter:blur(10px);
+    transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    position:relative; overflow:hidden;
+    opacity:0; transform:translateY(40px);
+  }
+  .feat-card.visible { opacity:1; transform:translateY(0); }
+  .feat-card::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--orange), transparent);
+    transform:scaleX(0); transition:transform 0.5s;
+  }
+  .feat-card:hover::after { transform:scaleX(1); }
+  .feat-card:hover {
+    transform:translateY(-10px);
+    border-color:rgba(242,101,34,0.15);
+    box-shadow:0 30px 60px rgba(0,0,0,0.4);
+  }
+  .feat-icon {
+    width:56px; height:56px; border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:20px; font-size:1.4rem;
+    transition:transform 0.4s;
+  }
+  .feat-card:hover .feat-icon { transform:scale(1.15) rotate(-8deg); }
+  .feat-card h3 { font-size:1.1rem; font-weight:800; margin-bottom:10px; }
+  .feat-card p { font-size:0.85rem; color:#64748b; line-height:1.7; }
+
+  .icon-orange { background:linear-gradient(135deg, rgba(242,101,34,0.15), rgba(242,101,34,0.05)); color:var(--orange); border:1px solid rgba(242,101,34,0.1); }
+  .icon-blue { background:linear-gradient(135deg, rgba(30,77,140,0.15), rgba(30,77,140,0.05)); color:var(--blue); border:1px solid rgba(30,77,140,0.1); }
+  .icon-purple { background:linear-gradient(135deg, rgba(168,85,247,0.15), rgba(168,85,247,0.05)); color:#a855f7; border:1px solid rgba(168,85,247,0.1); }
+  .icon-green { background:linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05)); color:#22c55e; border:1px solid rgba(34,197,94,0.1); }
+  .icon-pink { background:linear-gradient(135deg, rgba(236,72,153,0.15), rgba(236,72,153,0.05)); color:#ec4899; border:1px solid rgba(236,72,153,0.1); }
+  .icon-cyan { background:linear-gradient(135deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05)); color:#06b6d4; border:1px solid rgba(6,182,212,0.1); }
+
+  /* ===== INSTALL STEPS ===== */
+  .steps-wrap {
+    max-width:700px; margin:0 auto;
+    position:relative;
+  }
+  .step-line {
+    position:absolute; right:35px; top:60px; bottom:60px; width:2px;
+    background:linear-gradient(180deg, var(--orange), var(--blue));
+    opacity:0.2;
+  }
+  @media(max-width:600px){ .step-line{right:27px;} }
+  .step-row {
+    display:flex; align-items:flex-start; gap:24px; margin-bottom:32px;
+    opacity:0; transform:translateX(30px);
+    transition:all 0.7s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .step-row.visible { opacity:1; transform:translateX(0); }
+  .step-row:hover .step-num { transform:scale(1.1); box-shadow:0 0 30px rgba(242,101,34,0.4); }
+  .step-num {
+    width:56px; height:56px; border-radius:16px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem; font-weight:900; color:#fff;
+    background:linear-gradient(135deg, var(--orange), #e04e0f);
+    box-shadow:0 8px 24px rgba(242,101,34,0.3);
+    transition:all 0.3s;
+    position:relative; z-index:2;
+  }
+  .step-num.n2 { background:linear-gradient(135deg, var(--blue), #153a6e); box-shadow:0 8px 24px rgba(30,77,140,0.3); }
+  .step-num.n3 { background:linear-gradient(135deg, #22c55e, #16a34a); box-shadow:0 8px 24px rgba(34,197,94,0.3); }
+  .step-body {
+    flex:1; padding:20px 24px; border-radius:20px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    backdrop-filter:blur(10px);
+    transition:all 0.3s;
+  }
+  .step-row:hover .step-body { border-color:rgba(242,101,34,0.1); }
+  .step-body h4 { font-size:1.05rem; font-weight:800; margin-bottom:6px; }
+  .step-body p { font-size:0.85rem; color:#64748b; line-height:1.6; }
+
+  /* ===== TESTIMONIALS ===== */
+  .testi-grid {
+    max-width:1000px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:20px;
+  }
+  @media(max-width:800px){ .testi-grid{grid-template-columns:1fr;} }
+  .testi-card {
+    padding:32px 28px; border-radius:24px;
+    background:linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    border:1px solid var(--border);
+    backdrop-filter:blur(10px);
+    transition:all 0.4s;
+    opacity:0; transform:translateY(30px);
+  }
+  .testi-card.visible { opacity:1; transform:translateY(0); }
+  .testi-card:hover { transform:translateY(-6px); border-color:rgba(30,77,140,0.15); }
+  .testi-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .testi-avatar {
+    width:48px; height:48px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:1.1rem; color:#fff;
+  }
+  .testi-name { font-weight:700; font-size:0.9rem; }
+  .testi-time { font-size:0.7rem; color:#475569; }
+  .testi-stars { color:#fbbf24; font-size:0.75rem; margin-bottom:14px; display:flex; gap:3px; }
+  .testi-text { font-size:0.85rem; color:#94a3b8; line-height:1.7; font-style:italic; }
+
+  /* ===== CTA FINAL ===== */
+  .cta-box {
+    max-width:600px; margin:0 auto; padding:60px 40px; border-radius:32px;
+    background:linear-gradient(145deg, rgba(242,101,34,0.08), rgba(30,77,140,0.08));
+    border:1px solid rgba(242,101,34,0.1);
+    text-align:center; position:relative; overflow:hidden;
+    opacity:0; transform:translateY(30px) scale(0.97);
+    transition:all 0.8s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .cta-box.visible { opacity:1; transform:translateY(0) scale(1); }
+  .cta-box::before {
+    content:''; position:absolute; inset:-2px; border-radius:34px; z-index:-1;
+    background:linear-gradient(135deg, var(--orange), var(--blue), var(--orange));
+    background-size:300% 300%;
+    animation:gradMove 6s ease infinite;
+    opacity:0.3;
+  }
+  .cta-box .logo-sm {
+    width:64px; height:64px; border-radius:18px; margin:0 auto 20px;
+    background:linear-gradient(135deg, rgba(242,101,34,0.2), rgba(30,77,140,0.2));
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid rgba(255,255,255,0.06);
+  }
+  .cta-box .logo-sm img { width:40px; height:40px; object-fit:contain; }
+  .cta-box h2 { font-size:2rem; font-weight:900; margin-bottom:10px; }
+  .cta-box p { color:#64748b; margin-bottom:28px; }
+  .cta-checks { display:flex; justify-content:center; gap:20px; margin-top:20px; font-size:0.8rem; color:#475569; }
+  .cta-checks span { display:flex; align-items:center; gap:5px; }
+  .cta-checks i { color:#22c55e; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position:relative; z-index:2;
+    padding:40px 32px; border-top:1px solid var(--border);
+    text-align:center; color:#334155; font-size:0.8rem;
+  }
+  footer .f-logo { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; }
+  footer .f-logo img { width:28px; height:28px; border-radius:8px; }
+  footer .f-logo span { font-weight:700; color:#94a3b8; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:var(--dark); }
+  ::-webkit-scrollbar-thumb { background:var(--blue); border-radius:3px; }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="https://i.ibb.co/39XWPhgJ/image.png" alt="Logo">
+    <span>ون كليك باي</span>
   </div>
-  <script>
-    // Initialize Lucide icons
-    lucide.createIcons();
+  <div class="nav-badge">
+    <div class="dot"></div>
+    <span>متاح للتحميل</span>
+  </div>
+</nav>
 
-    // Particles
-    (function() {
-      const container = document.getElementById('particles-container');
-      const colors = ['#00d1b2', '#00b4d8', '#7c3aed'];
-      for (let i = 0; i < 20; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.background = colors[i % colors.length];
-        p.style.opacity = (Math.random() * 0.3 + 0.1).toString();
-        p.style.left = Math.random() * 100 + '%';
-        p.style.top = Math.random() * 100 + '%';
-        p.style.animation = `float ${3 + Math.random() * 4}s ease-in-out infinite`;
-        p.style.animationDelay = (Math.random() * 3) + 's';
-        container.appendChild(p);
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">
+        <i class="fas fa-bolt"></i>
+        الإصدار 1.0 متوفر الآن
+      </div>
+      <h1>تجربة دفع<br><span class="grad">بلا حدود</span></h1>
+      <p class="lead">ادفع بنقرة واحدة — سريع، آمن، بسيط</p>
+      <p class="sub">تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك المالية.</p>
+      <a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/one-click-pay.apk" target="_blank" rel="noopener noreferrer" class="btn-main">
+        <i class="fas fa-download"></i>
+        تحميل التطبيق مجاناً
+      </a>
+      <div class="hero-trust">
+        <span><i class="fas fa-shield-halved"></i> آمن 100%</span>
+        <span><i class="fas fa-file-code"></i> APK مباشر</span>
+        <span><i class="fas fa-mobile-screen"></i> أندرويد</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="orbit-container">
+        <div class="ring r1"></div>
+        <div class="ring r2"></div>
+        <div class="ring r3"></div>
+        <div class="ring r4"></div>
+        <div class="orbit-dot od1"></div>
+        <div class="orbit-dot od2"></div>
+        <div class="orbit-dot od3"></div>
+        <div class="logo-glow"></div>
+        <div class="logo-card">
+          <img src="https://i.ibb.co/39XWPhgJ/image.png" alt="ون كليك باي">
+        </div>
+        <div class="float-badge fb1">
+          <i class="fas fa-star" style="color:#fbbf24"></i> 5.0 تقييم
+        </div>
+        <div class="float-badge fb2">
+          <i class="fas fa-users" style="color:var(--blue)"></i> +10K مستخدم
+        </div>
+        <div class="float-badge fb3">
+          <i class="fas fa-bolt" style="color:var(--orange)"></i> فوري
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section>
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="num">100%</div>
+      <div class="lbl">مجاني بالكامل</div>
+    </div>
+    <div class="stat-item">
+      <div class="num">V1.0</div>
+      <div class="lbl">أحدث إصدار</div>
+    </div>
+    <div class="stat-item">
+      <div class="num"><i class="fas fa-bolt"></i></div>
+      <div class="lbl">سرعة فائقة</div>
+    </div>
+    <div class="stat-item">
+      <div class="num"><i class="fas fa-shield-halved"></i></div>
+      <div class="lbl">حماية متقدمة</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="section-title">
+    <div class="label">المميزات</div>
+    <h2>لماذا <span class="grad">ون كليك باي</span>؟</h2>
+    <p>تجربة دفع إلكتروني متكاملة بأحدث التقنيات وأعلى معايير الأمان</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon icon-orange"><i class="fas fa-bolt"></i></div>
+      <h3>سرعة فائقة</h3>
+      <p>أتمم معاملاتك في أقل من ثانية واحدة. تقنية متطورة تضمن لك أسرع تجربة دفع إلكتروني.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-blue"><i class="fas fa-shield-halved"></i></div>
+      <h3>أمان متقدم</h3>
+      <p>تشفير من الطرف إلى الطرف يحمي بياناتك ومعاملاتك بأعلى معايير الأمان العالمية.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-purple"><i class="fas fa-wand-magic-sparkles"></i></div>
+      <h3>سهولة الاستخدام</h3>
+      <p>واجهة بسيطة وأنيقة مصممة للجميع. نقرة واحدة فقط لإتمام أي عملية دفع.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-green"><i class="fas fa-headset"></i></div>
+      <h3>دعم على مدار الساعة</h3>
+      <p>فريق دعم متخصص جاهز لمساعدتك في أي وقت. نحن هنا من أجلك دائماً.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-pink"><i class="fas fa-chart-pie"></i></div>
+      <h3>تتبع ذكي</h3>
+      <p>لوحة تحكم متكاملة لتتبع جميع معاملاتك المالية بشكل مفصل ومنظم.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon icon-cyan"><i class="fas fa-globe"></i></div>
+      <h3>تحويلات عالمية</h3>
+      <p>أرسل واستقبل الأموال من أي مكان في العالم بأسعار صرف تنافسية.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section>
+  <div class="section-title">
+    <div class="label" style="background:linear-gradient(135deg, rgba(30,77,140,0.12), rgba(30,77,140,0.12)); border-color:rgba(30,77,140,0.15); color:var(--blue);">التثبيت</div>
+    <h2>طريقة التثبيت</h2>
+    <p>ثلاث خطوات بسيطة وستكون جاهزاً للاستخدام</p>
+  </div>
+  <div class="steps-wrap">
+    <div class="step-line"></div>
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>حمّل ملف APK</h4>
+        <p>اضغط على زر التحميل أعلاه لتنزيل ملف التطبيق مباشرة على هاتفك الأندرويد.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num n2">2</div>
+      <div class="step-body">
+        <h4>فعّل المصادر المجهولة</h4>
+        <p>انتقل إلى الإعدادات ← الأمان ← السماح بالتثبيت من مصادر غير معروفة.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num n3">3</div>
+      <div class="step-body">
+        <h4>ثبّت واستمتع</h4>
+        <p>افتح الملف المحمّل واتبع التعليمات. ابدأ استخدام التطبيق فوراً!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="section-title">
+    <div class="label" style="background:linear-gradient(135deg, rgba(168,85,247,0.12), rgba(168,85,247,0.12)); border-color:rgba(168,85,247,0.15); color:#a855f7;">آراء المستخدمين</div>
+    <h2>ماذا يقول <span class="grad">المستخدمون</span>؟</h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-header">
+        <div class="testi-avatar" style="background:linear-gradient(135deg, var(--orange), var(--blue));">أ</div>
+        <div>
+          <div class="testi-name">أحمد علي</div>
+          <div class="testi-time">مستخدم منذ 6 أشهر</div>
+        </div>
+      </div>
+      <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+      <div class="testi-text">"تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!"</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-header">
+        <div class="testi-avatar" style="background:linear-gradient(135deg, var(--blue), #a855f7);">ف</div>
+        <div>
+          <div class="testi-name">فاطمة محمد</div>
+          <div class="testi-time">مستخدمة منذ 3 أشهر</div>
+        </div>
+      </div>
+      <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+      <div class="testi-text">"أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. أنصح به بقوة!"</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-header">
+        <div class="testi-avatar" style="background:linear-gradient(135deg, #a855f7, var(--orange));">م</div>
+        <div>
+          <div class="testi-name">محمود حسن</div>
+          <div class="testi-time">مستخدم منذ شهر</div>
+        </div>
+      </div>
+      <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+      <div class="testi-text">"آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع بتجربته!"</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="cta-box">
+    <div class="logo-sm"><img src="https://i.ibb.co/39XWPhgJ/image.png" alt="Logo"></div>
+    <h2>جاهز للبدء؟</h2>
+    <p>حمّل التطبيق الآن وابدأ تجربة دفع لا مثيل لها. مجاني بالكامل!</p>
+    <a href="https://github.com/Esmailali20012/my-apps/releases/download/V1.0/one-click-pay.apk" target="_blank" rel="noopener noreferrer" class="btn-main" style="margin-top:0;">
+      <i class="fas fa-download"></i>
+      تحميل الآن
+    </a>
+    <div class="cta-checks">
+      <span><i class="fas fa-check-circle"></i> مجاني</span>
+      <span><i class="fas fa-check-circle"></i> آمن</span>
+      <span><i class="fas fa-check-circle"></i> سريع</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">
+    <img src="https://i.ibb.co/39XWPhgJ/image.png" alt="Logo">
+    <span>ون كليك باي</span>
+  </div>
+  <p>© 2025 ون كليك باي — جميع الحقوق محفوظة</p>
+</footer>
+
+<script>
+// ===== CANVAS PARTICLES =====
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+class Particle {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.size = Math.random() * 2 + 0.5;
+    this.alpha = Math.random() * 0.5 + 0.1;
+    const colors = ['#f26522','#1e4d8c','#a855f7'];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.globalAlpha = this.alpha;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+function animateCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  // Draw connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = 'rgba(242,101,34,0.04)';
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
       }
-    })();
-
-    // Download button - Direct link to GitHub release
-    const downloadBtn = document.getElementById('download-btn');
-    downloadBtn.href = 'https://github.com/Esmailali20012/my-apps/releases/download/V1.0/1CLICK-PAY.apk';
-
-    // Element SDK
-    const defaultConfig = {
-      app_name: '1CLICK PAY',
-      app_tagline: 'ادفع بنقرة واحدة — سريع، آمن، بسيط',
-      app_description: 'تطبيق الدفع الإلكتروني الأسرع والأكثر أماناً. أرسل واستقبل الأموال في ثوانٍ معدودة مع حماية متقدمة لبياناتك.',
-      download_button_text: 'تحميل التطبيق مجاناً',
-      feature_1: 'سرعة فائقة',
-      feature_2: 'أمان متقدم',
-      feature_3: 'سهولة الاستخدام',
-      testimonial_1: 'تطبيق ممتاز جداً وسهل الاستخدام. أصبح التحويل بين الحسابات أسهل وأسرع بكثير!',
-      testimonial_2: 'أسرع تطبيق دفع استخدمته. المعاملات فورية والأمان على أعلى مستوى. توصي به بقوة!',
-      testimonial_3: 'آمن وموثوق تماماً. بيانات حسابي محمية بشكل كامل. ممتاز جداً وأنصح الجميع به!',
-      footer_text: '© 2025 1CLICK PAY — جميع الحقوق محفوظة',
-      background_color: '#0a0e17',
-      surface_color: '#141b2d',
-      text_color: '#e0e7ef',
-      primary_action_color: '#00d1b2',
-      secondary_action_color: '#7c3aed',
-      font_family: 'Tajawal',
-      font_size: 16
-    };
-
-    function applyConfig(config) {
-      const c = { ...defaultConfig, ...config };
-
-      // Text content
-      document.getElementById('nav-brand').textContent = c.app_name;
-      document.getElementById('hero-title').textContent = c.app_name;
-      document.getElementById('hero-tagline').textContent = c.app_tagline;
-      document.getElementById('hero-description').textContent = c.app_description;
-      document.getElementById('download-btn-text').textContent = c.download_button_text;
-      document.getElementById('feature-1-title').textContent = c.feature_1;
-      document.getElementById('feature-2-title').textContent = c.feature_2;
-      document.getElementById('feature-3-title').textContent = c.feature_3;
-      document.getElementById('testimonial-1').textContent = `"${c.testimonial_1}"`;
-      document.getElementById('testimonial-2').textContent = `"${c.testimonial_2}"`;
-      document.getElementById('testimonial-3').textContent = `"${c.testimonial_3}"`;
-      document.getElementById('footer-text').textContent = c.footer_text;
-
-      // Colors
-      const wrapper = document.getElementById('app-wrapper');
-      wrapper.style.backgroundColor = c.background_color;
-      document.body.style.backgroundColor = c.background_color;
-
-      // Text color
-      document.querySelectorAll('[style*="color: #e0e7ef"]').forEach(el => {
-        el.style.color = c.text_color;
-      });
-      document.getElementById('nav-brand').style.color = c.text_color;
-      document.getElementById('hero-title').style.color = c.text_color;
-      document.querySelectorAll('h2, h3').forEach(el => {
-        if (el.classList.contains('shimmer-text')) return;
-        el.style.color = c.text_color;
-      });
-
-      // Font
-      const fontStack = `${c.font_family}, Tajawal, sans-serif`;
-      document.body.style.fontFamily = fontStack;
-
-      // Font size scaling
-      const base = c.font_size;
-      document.getElementById('hero-title').style.fontSize = '';
-      document.getElementById('hero-tagline').style.fontSize = `${base * 1.4}px`;
-      document.getElementById('hero-description').style.fontSize = `${base}px`;
-      document.getElementById('footer-text').style.fontSize = `${base * 0.85}px`;
     }
+  }
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
 
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: async (config) => {
-          applyConfig(config);
-        },
-        mapToCapabilities: (config) => ({
-          recolorables: [
-            {
-              get: () => config.background_color || defaultConfig.background_color,
-              set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
-            },
-            {
-              get: () => config.surface_color || defaultConfig.surface_color,
-              set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
-            },
-            {
-              get: () => config.text_color || defaultConfig.text_color,
-              set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
-            },
-            {
-              get: () => config.primary_action_color || defaultConfig.primary_action_color,
-              set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); }
-            },
-            {
-              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-              set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); }
-            }
-          ],
-          borderables: [],
-          fontEditable: {
-            get: () => config.font_family || defaultConfig.font_family,
-            set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
-          },
-          fontSizeable: {
-            get: () => config.font_size || defaultConfig.font_size,
-            set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
-          }
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ['app_name', config.app_name || defaultConfig.app_name],
-          ['app_tagline', config.app_tagline || defaultConfig.app_tagline],
-          ['app_description', config.app_description || defaultConfig.app_description],
-          ['download_button_text', config.download_button_text || defaultConfig.download_button_text],
-          ['feature_1', config.feature_1 || defaultConfig.feature_1],
-          ['feature_2', config.feature_2 || defaultConfig.feature_2],
-          ['feature_3', config.feature_3 || defaultConfig.feature_3],
-          ['testimonial_1', config.testimonial_1 || defaultConfig.testimonial_1],
-          ['testimonial_2', config.testimonial_2 || defaultConfig.testimonial_2],
-          ['testimonial_3', config.testimonial_3 || defaultConfig.testimonial_3],
-          ['footer_text', config.footer_text || defaultConfig.footer_text]
-        ])
-      });
+// ===== SCROLL REVEAL =====
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
     }
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dfbfcc9d363a62e',t:'MTc3NDA4NTk0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.section-title, .stat-item, .feat-card, .step-row, .testi-card, .cta-box').forEach(el => {
+  revealObserver.observe(el);
+});
+
+// Stagger delays for cards
+const featCards = document.querySelectorAll('.feat-card');
+featCards.forEach((card, i) => card.style.transitionDelay = (i * 0.1) + 's');
+const testiCards = document.querySelectorAll('.testi-card');
+testiCards.forEach((card, i) => card.style.transitionDelay = (i * 0.1) + 's');
+const stepRows = document.querySelectorAll('.step-row');
+stepRows.forEach((row, i) => row.style.transitionDelay = (i * 0.15) + 's');
+const statItems = document.querySelectorAll('.stat-item');
+statItems.forEach((item, i) => item.style.transitionDelay = (i * 0.1) + 's');
+
+// ===== PARALLAX MOUSE =====
+document.addEventListener('mousemove', (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
+  const rings = document.querySelectorAll('.ring');
+  rings.forEach((ring, i) => {
+    ring.style.transform = `translate(${x * (i+1) * 0.3}px, ${y * (i+1) * 0.3}px)`;
+  });
+});
+</script>
+</body>
 </html>
